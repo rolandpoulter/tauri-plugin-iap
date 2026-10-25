@@ -186,7 +186,7 @@ impl<R: Runtime> Iap<R> {
         // Query products from the store
         let query_result = context
             .GetStoreProductsAsync(&product_kinds, &store_ids)
-            .and_then(|async_op| async_op.get())?;
+            .and_then(|async_op| async_op.join())?;
 
         // Check for any errors
         let extended_error = query_result.ExtendedError()?;
@@ -367,12 +367,12 @@ impl<R: Runtime> Iap<R> {
 
             context
                 .RequestPurchaseWithPurchasePropertiesAsync(&store_id, &properties)
-                .and_then(|async_op| async_op.get())?
+                .and_then(|async_op| async_op.join())?
         } else {
             // Simple purchase without properties
             context
                 .RequestPurchaseAsync(&store_id)
-                .and_then(|async_op| async_op.get())?
+                .and_then(|async_op| async_op.join())?
         };
 
         // Check purchase status
@@ -491,7 +491,7 @@ impl<R: Runtime> Iap<R> {
         // Get app license info
         let app_license = context
             .GetAppLicenseAsync()
-            .and_then(|async_op| async_op.get())?;
+            .and_then(|async_op| async_op.join())?;
 
         let mut purchases = Vec::new();
 
@@ -591,7 +591,7 @@ impl<R: Runtime> Iap<R> {
 
         let result = context
             .ReportConsumableFulfillmentAsync(&store_id, 1u32, tracking_id)
-            .and_then(|async_op| async_op.get())?;
+            .and_then(|async_op| async_op.join())?;
 
         let status = result.Status()?;
         match status {
@@ -638,7 +638,7 @@ impl<R: Runtime> Iap<R> {
         // Get app license to check ownership
         let app_license = context
             .GetAppLicenseAsync()
-            .and_then(|async_op| async_op.get())?;
+            .and_then(|async_op| async_op.join())?;
 
         let addon_licenses = app_license.AddOnLicenses()?;
 
